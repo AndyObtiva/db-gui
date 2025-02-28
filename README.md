@@ -1,6 +1,6 @@
 # DB GUI (Database Graphical User Interface) 0.0.1
 ## [<img src="https://raw.githubusercontent.com/AndyObtiva/glimmer/master/images/glimmer-logo-hi-res.png" height=40 /> Glimmer DSL for LibUI Application](https://github.com/AndyObtiva/glimmer-dsl-libui)
-[![Gem Version](https://badge.fury.io/rb/glimmer_snake.svg)](http://badge.fury.io/rb/glimmer_snake)
+[![Gem Version](https://badge.fury.io/rb/db-gui.svg)](http://badge.fury.io/rb/db-gui)
 
 
 This is a database graphical user interface that enables interaction with relational SQL database data.
