@@ -13,26 +13,31 @@ class DbGui
             entry {
               label 'Host:'
               text <=> [db_config, :host]
+              enabled <= [db_config, :connected, on_read: :!]
             }
             
             spinbox(0, 1_000_000) {
               label 'Port:'
               value <=> [db_config, :port]
+              enabled <= [db_config, :connected, on_read: :!]
             }
             
             entry {
               label 'Database Name:'
               text <=> [db_config, :dbname]
+              enabled <= [db_config, :connected, on_read: :!]
             }
             
             entry {
               label 'Username:'
               text <=> [db_config, :username]
+              enabled <= [db_config, :connected, on_read: :!]
             }
             
             password_entry {
               label 'Password:'
               text <=> [db_config, :password]
+              enabled <= [db_config, :connected, on_read: :!]
             }
           }
           

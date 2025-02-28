@@ -13,12 +13,22 @@ class DbGui
             text <=> [db_config, :db_command]
           }
           
-          button('Run') {
+          horizontal_box {
             stretchy false
-              
-            on_clicked do
-              db_config.run_db_command
-            end
+          
+            button('Run') {
+              on_clicked do
+                db_config.run_db_command
+              end
+            }
+            
+            label('Timeout (msec): ') {
+              stretchy false
+            }
+            spinbox(0, 60000) {
+              stretchy false
+              value <=> [db_config, :db_command_timeout]
+            }
           }
         }
       }

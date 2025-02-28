@@ -10,10 +10,12 @@ class DbGui
       alias connected? connected
       attr_accessor :db_command_result
       attr_accessor :db_command
+      attr_accessor :db_command_timeout
     
       def initialize
         self.port = 5432 # PostgreSQL default port
         self.db_command_result = ''
+        self.db_command_timeout = (ENV['DB_COMMAND_TIMEOUT_IN_MILLISECONDS'] || 300).to_i
         load_db_config
         connect if to_a.none? {|value| value.nil? || (value.respond_to?(:empty?) && value.empty?) }
       end
@@ -86,7 +88,7 @@ class DbGui
       
       def io_gets
         # TODO figure out a way of knowing the end of input without timing out
-        Timeout.timeout(3) { io.gets }
+        Timeout.timeout(db_command_timeout/1000.0) { io.gets }
       rescue
         @io = nil
         nil
