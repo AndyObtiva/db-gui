@@ -14,8 +14,8 @@ require 'rake'
 require 'juwelier'
 Juwelier::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
-  gem.name = "db_gui"
-  gem.homepage = "http://github.com/AndyObtiva/db_gui"
+  gem.name = "db-gui"
+  gem.homepage = "http://github.com/AndyObtiva/db-gui"
   gem.license = "MIT"
   gem.summary = %Q{Db Gui}
   gem.description = %Q{Db Gui}
@@ -24,7 +24,7 @@ Juwelier::Tasks.new do |gem|
 
   gem.files = Dir['VERSION', 'LICENSE.txt', 'app/**/*', 'bin/**/*', 'config/**/*', 'db/**/*', 'docs/**/*', 'fonts/**/*', 'icons/**/*', 'images/**/*', 'lib/**/*', 'script/**/*', 'sounds/**/*', 'videos/**/*']
   gem.require_paths = ['lib', 'app']
-  gem.executables = ['db_gui']
+  gem.executables = ['db-gui', 'dbgui', 'db-ui', 'dbui']
   # dependencies defined in Gemfile
 end
 Juwelier::RubygemsDotOrgTasks.new
@@ -47,7 +47,7 @@ Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "db_gui #{version}"
+  rdoc.title = "db-gui #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
