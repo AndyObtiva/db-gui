@@ -1,6 +1,7 @@
 require 'db_gui/presenter/db_gui_presenter'
 
 require 'db_gui/view/db_config_form'
+require 'db_gui/view/db_command_form'
 
 class DbGui
   module View
@@ -24,6 +25,12 @@ class DbGui
           vertical_box {
             db_config_form(db_config: presenter.db_config) {
               stretchy false
+            }
+            
+            db_command_form(db_config: presenter.db_config)
+            
+            non_wrapping_multiline_entry {
+              text <=> [presenter.db_config, :db_command_result, on_write: ->(value) {presenter.db_config.db_command_result}]
             }
           }
         }

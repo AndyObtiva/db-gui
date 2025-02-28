@@ -1,3 +1,5 @@
+require 'timeout'
+
 class DbGui
   module Model
     # TODO consider renaming to DB connection
@@ -6,11 +8,12 @@ class DbGui
       
       attr_accessor :connected
       alias connected? connected
-      attr_accessor :console
+      attr_accessor :db_command_result
+      attr_accessor :db_command
     
       def initialize
         self.port = 5432 # PostgreSQL default port
-        self.console = ''
+        self.db_command_result = ''
         load_db_config
         connect if to_a.none? {|value| value.nil? || (value.respond_to?(:empty?) && value.empty?) }
       end
@@ -39,24 +42,31 @@ class DbGui
         @io ||= IO.popen("PGPASSWORD=\"#{password}\" psql --host=#{host} --port=#{port} --username=#{username} --dbname=#{dbname}", 'r+')
       end
       
-      def io_command(command)
+      def run_io_command(command)
         @io_command_try ||= 0
         @io_command_try += 1
         io.puts(command)
+        read_io_into_db_command_result
       rescue Errno::EPIPE => e
         @io = nil
-        io_command(command) unless @io_command_try > 1
+        run_io_command(command) unless @io_command_try > 1
       end
       
-      def io_append_response_to_console
-        while line = io.gets
-          self.console << line
+      def run_db_command
+        run_io_command(db_command)
+      end
+      
+      private
+      
+      def read_io_into_db_command_result
+        self.db_command_result = ''
+        while (line = io_gets)
+          result = line.to_s
+          self.db_command_result += result
         end
       rescue Errno::EPIPE => e
         @io = nil
       end
-      
-      private
       
       def save_db_config
         db_config_hash = to_h
@@ -72,6 +82,14 @@ class DbGui
         end
       rescue => e
         puts "No database configuration is stored yet. #{e.message}"
+      end
+      
+      def io_gets
+        # TODO figure out a way of knowing the end of input without timing out
+        Timeout.timeout(3) { io.gets }
+      rescue
+        @io = nil
+        nil
       end
     end
   end
