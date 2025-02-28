@@ -7,6 +7,8 @@ This is a database graphical user interface that enables interaction with relati
 
 It currently supports PostgreSQL as a start, with the potential of supporting many other databases in the future.
 
+![db gui](/screenshots/db-gui-mac.png)
+
 ## Setup
 
 Run:
