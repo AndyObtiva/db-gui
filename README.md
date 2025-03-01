@@ -3,7 +3,7 @@
 [![Gem Version](https://badge.fury.io/rb/db-gui.svg)](http://badge.fury.io/rb/db-gui)
 
 
-This is a database graphical user interface that enables interaction with relational SQL database data.
+This is an early alpha database graphical user interface that enables interaction with a relational SQL database.
 
 It currently supports PostgreSQL as a start, with the potential of supporting many other databases in the future.
 
@@ -23,20 +23,9 @@ Run:
 dbui
 ```
 
-Or run alias:
-```
-db-ui
-```
+Or, run one of the aliases: `db-ui` / `dbgui` / `db-gui`
 
-Or run alias:
-```
-dbgui
-```
-
-Or run alias:
-```
-db-gui
-```
+Note that it stores the last connection details under `~/.db_gui`, and will auto-connect using that configuration on startup for extra convenience (in the future, there is the potential to support multiple connection configurations).
 
 ## Change Log
 
