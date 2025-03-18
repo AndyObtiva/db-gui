@@ -110,23 +110,27 @@ class DbGui
       
       def db_command_result_count_headers_rows
         if @db_command_result_count_headers_rows.nil? || db_command_result != @last_db_command_result
-          count = 0
-          headers = rows = []
-          db_command_result_lines = db_command_result.lines
-          db_command_result_lines.pop if db_command_result_lines.last == "\n"
-          if db_command_result_lines.any?
-            headers = db_command_result_lines.first.split('|').map(&:strip)
-            count_footer = db_command_result_lines.last
-            count_match = count_footer.match(/^\((\d+) row/)
-            if count_match
-              count = count_match[1].to_i
-              rows = db_command_result_lines[2..-2].map {|row| row.split('|').map(&:strip) }
-            end
-          end
-          @db_command_result_count_headers_rows = [count, headers, rows]
+          @db_command_result_count_headers_rows = compute_db_command_result_count_headers_rows
           @last_db_command_result = db_command_result
         end
         @db_command_result_count_headers_rows
+      end
+      
+      def compute_db_command_result_count_headers_rows
+        count = 0
+        headers = rows = []
+        db_command_result_lines = db_command_result.lines
+        db_command_result_lines.pop if db_command_result_lines.last == "\n"
+        if db_command_result_lines.any?
+          headers = db_command_result_lines.first.split('|').map(&:strip)
+          count_footer = db_command_result_lines.last
+          count_match = count_footer.match(/^\((\d+) row/)
+          if count_match
+            count = count_match[1].to_i
+            rows = db_command_result_lines[2..-2].map {|row| row.split('|').map(&:strip) }
+          end
+        end
+        [count, headers, rows]
       end
     end
   end
