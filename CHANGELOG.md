@@ -3,6 +3,8 @@
 ## 0.0.3
 
 - Show count of rows produced by a DB command result
+- Terminate DB commands (SQL statements) with a semi-colon for convenience if they did not have a semi-colon already (to avoid having them fail)
+- Increase max timeout to 60*60*1000 (1 hour)
 
 ## 0.0.2
 

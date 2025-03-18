@@ -45,6 +45,8 @@ class DbGui
       end
       
       def run_io_command(command)
+        command = command.strip
+        command = "#{command};" unless command.end_with?(';')
         @io_command_try ||= 0
         @io_command_try += 1
         io.puts(command)

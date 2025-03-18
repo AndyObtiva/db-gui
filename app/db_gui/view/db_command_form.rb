@@ -5,6 +5,8 @@ class DbGui
     class DbCommandForm
       include Glimmer::LibUI::CustomControl
       
+      TIMEOUT_MAX_IN_MILLISECONDS = (ENV['TIMEOUT_MAX_IN_MILLISECONDS'] || 60*60*1000).to_i
+      
       option :db_config
       
       body {
@@ -25,7 +27,7 @@ class DbGui
             label('Timeout (msec): ') {
               stretchy false
             }
-            spinbox(0, 60000) {
+            spinbox(0, TIMEOUT_MAX_IN_MILLISECONDS) {
               stretchy false
               value <=> [db_config, :db_command_timeout]
             }
