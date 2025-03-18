@@ -58,6 +58,18 @@ class DbGui
         run_io_command(db_command)
       end
       
+      def db_command_result_count
+        db_command_result_count_headers_rows[0]
+      end
+      
+      def db_command_result_headers
+        db_command_result_count_headers_rows[1]
+      end
+      
+      def db_command_result_rows
+        db_command_result_count_headers_rows[2]
+      end
+      
       private
       
       def read_io_into_db_command_result
@@ -92,6 +104,27 @@ class DbGui
       rescue
         @io = nil
         nil
+      end
+      
+      def db_command_result_count_headers_rows
+        if @db_command_result_count_headers_rows.nil? || db_command_result != @last_db_command_result
+          count = 0
+          headers = rows = []
+          db_command_result_lines = db_command_result.lines
+          db_command_result_lines.pop if db_command_result_lines.last == "\n"
+          if db_command_result_lines.any?
+            headers = db_command_result_lines.first.split('|').map(&:strip)
+            count_footer = db_command_result_lines.last
+            count_match = count_footer.match(/^\((\d+) row/)
+            if count_match
+              count = count_match[1].to_i
+              rows = db_command_result_lines[2..-2].map {|row| row.split('|').map(&:strip) }
+            end
+          end
+          @db_command_result_count_headers_rows = [count, headers, rows]
+          @last_db_command_result = db_command_result
+        end
+        @db_command_result_count_headers_rows
       end
     end
   end

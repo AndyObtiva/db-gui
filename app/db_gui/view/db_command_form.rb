@@ -29,6 +29,14 @@ class DbGui
               stretchy false
               value <=> [db_config, :db_command_timeout]
             }
+            
+            label('Row(s): ') {
+              stretchy false
+            }
+            label {
+              stretchy false
+              text <= [db_config, :db_command_result_count, computed_by: :db_command_result, on_read: :to_s]
+            }
           }
         }
       }

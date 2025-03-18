@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.3
+
+- Show count of rows produced by a DB command result
+
 ## 0.0.2
 
 - Support displaying DB command results in a table instead of a non_wrapping_multiline_entry
