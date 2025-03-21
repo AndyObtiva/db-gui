@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.4
+
+- Make SQL command entry a non_wrapping_multiline_entry
+
 ## 0.0.3
 
 - Show count of rows produced by a DB command result

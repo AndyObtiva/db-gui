@@ -11,7 +11,7 @@ class DbGui
       
       body {
         vertical_box {
-          entry {
+          non_wrapping_multiline_entry {
             text <=> [db_config, :db_command]
           }
           
