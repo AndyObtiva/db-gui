@@ -3,7 +3,7 @@ require 'timeout'
 class DbGui
   module Model
     # TODO consider renaming to DB connection
-    DbConfig = Struct.new(:host, :port, :dbname, :username, :password, keyword_init: true) do
+    Db = Struct.new(:host, :port, :dbname, :username, :password, keyword_init: true) do
       FILE_DB_CONFIG = File.expand_path(File.join('~', '.db_gui'))
       
       attr_accessor :connected

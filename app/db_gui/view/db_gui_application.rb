@@ -1,4 +1,4 @@
-require 'db_gui/presenter/db_gui_presenter'
+require 'db_gui/model/db'
 
 require 'db_gui/view/db_config_form'
 require 'db_gui/view/db_command_form'
@@ -9,10 +9,10 @@ class DbGui
     class DbGuiApplication
       include Glimmer::LibUI::Application
     
-      attr_reader :presenter
+      attr_reader :db
           
       before_body do
-        @presenter = Presenter::DbGuiPresenter.new
+        @db = Model::Db.new
 #         menu_bar # TODO implement
       end
   
@@ -24,13 +24,13 @@ class DbGui
           margined true
          
           vertical_box {
-            db_config_form(db_config: presenter.db_config) {
+            db_config_form(db:) {
               stretchy false
             }
             
-            db_command_form(db_config: presenter.db_config)
+            db_command_form(db:)
             
-            db_command_result_table(db_config: presenter.db_config)
+            db_command_result_table(db:)
           }
         }
       }

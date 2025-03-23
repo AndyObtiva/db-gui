@@ -1,4 +1,4 @@
-require 'db_gui/model/db_config'
+require 'db_gui/model/db'
 
 class DbGui
   module View
@@ -7,12 +7,12 @@ class DbGui
       
       TIMEOUT_MAX_IN_MILLISECONDS = (ENV['TIMEOUT_MAX_IN_MILLISECONDS'] || 60*60*1000).to_i
       
-      option :db_config
+      option :db
       
       body {
         vertical_box {
           non_wrapping_multiline_entry {
-            text <=> [db_config, :db_command]
+            text <=> [db, :db_command]
           }
           
           horizontal_box {
@@ -20,7 +20,7 @@ class DbGui
           
             button('Run') {
               on_clicked do
-                db_config.run_db_command
+                db.run_db_command
               end
             }
             
@@ -29,7 +29,7 @@ class DbGui
             }
             spinbox(0, TIMEOUT_MAX_IN_MILLISECONDS) {
               stretchy false
-              value <=> [db_config, :db_command_timeout]
+              value <=> [db, :db_command_timeout]
             }
             
             label('Row(s): ') {
@@ -37,7 +37,7 @@ class DbGui
             }
             label {
               stretchy false
-              text <= [db_config, :db_command_result_count, computed_by: :db_command_result, on_read: :to_s]
+              text <= [db, :db_command_result_count, computed_by: :db_command_result, on_read: :to_s]
             }
           }
         }
