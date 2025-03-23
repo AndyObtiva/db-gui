@@ -1,10 +1,14 @@
+require 'fileutils'
 require 'timeout'
 
 class DbGui
   module Model
-    # TODO consider renaming to DB connection
     Db = Struct.new(:host, :port, :dbname, :username, :password, keyword_init: true) do
-      FILE_DB_CONFIG = File.expand_path(File.join('~', '.db_gui'))
+      DIR_DB_GUI = File.expand_path(File.join('~', '.db_gui'))
+      FileUtils.rm(DIR_DB_GUI) if File.file?(DIR_DB_GUI)
+      FileUtils.mkdir_p(DIR_DB_GUI)
+      FILE_DB_CONFIGS = File.expand_path(File.join(DIR_DB_GUI, '.db_configs'))
+      FILE_DB_COMMANDS = File.expand_path(File.join(DIR_DB_GUI, '.db_commands'))
       
       attr_accessor :connected
       alias connected? connected
@@ -17,7 +21,8 @@ class DbGui
         self.db_command_result = ''
         self.db_command_timeout = (ENV['DB_COMMAND_TIMEOUT_IN_MILLISECONDS'] || 300).to_i
         load_db_config
-        connect if to_a.none? {|value| value.nil? || (value.respond_to?(:empty?) && value.empty?) }
+        load_db_command
+        connect if to_h.except(:password).none? {|value| value.nil? || (value.respond_to?(:empty?) && value.empty?) }
       end
       
       def toggle_connection
@@ -58,6 +63,7 @@ class DbGui
       
       def run_db_command
         run_io_command(db_command)
+        save_db_command
       end
       
       def db_command_result_count
@@ -86,18 +92,34 @@ class DbGui
       
       def save_db_config
         db_config_hash = to_h
-        db_config_file_content = YAML.dump(db_config_hash)
-        File.write(FILE_DB_CONFIG, db_config_file_content)
+        db_configs_array = [db_config_hash] # TODO in the future, support storing multiple DB configs
+        db_configs_file_content = YAML.dump(db_configs_array)
+        File.write(FILE_DB_CONFIGS, db_configs_file_content)
       end
       
       def load_db_config
-        db_config_file_content = File.read(FILE_DB_CONFIG)
-        db_config_hash = YAML.load(db_config_file_content)
+        db_configs_file_content = File.read(FILE_DB_CONFIGS)
+        db_configs_array = [YAML.load(db_configs_file_content)].flatten
+        db_config_hash = db_configs_array.first # TODO in the future, support loading multiple DB configs
         db_config_hash.each do |attribute, value|
           self.send("#{attribute}=", value)
         end
       rescue => e
-        puts "No database configuration is stored yet. #{e.message}"
+        puts "No database configurations stored yet. #{e.message}"
+      end
+      
+      def save_db_command
+        db_commands_array = [db_command] # TODO in the future, support storing multiple DB configs
+        db_commands_file_content = YAML.dump(db_commands_array)
+        File.write(FILE_DB_COMMANDS, db_commands_file_content)
+      end
+      
+      def load_db_command
+        db_commands_file_content = File.read(FILE_DB_COMMANDS)
+        db_commands_array = YAML.load(db_commands_file_content)
+        self.db_command = db_commands_array.first
+      rescue => e
+        puts "No database commands stored yet. #{e.message}"
       end
       
       def io_gets

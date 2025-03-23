@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.0
+
+- Save last DB command
+- Move saved configuration from ~/.db_gui as a file to ~/.db_gui as a directory with multiple files underneath: ~/.db_gui/.db_configs & ~/.db_gui/.db_commands
+
 ## 0.0.4
 
 - Make SQL command entry a non_wrapping_multiline_entry
