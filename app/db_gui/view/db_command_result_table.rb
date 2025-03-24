@@ -10,7 +10,9 @@ class DbGui
       body {
         vertical_box {
           content(db, :db_command_result) {
-            if db.db_command_result_count > 0
+            if db.db_command_result_error?
+              label(db.db_command_result)
+            elsif db.db_command_result_count > 0
               table {
                 db.db_command_result_headers.each do |header|
                   text_column(header)

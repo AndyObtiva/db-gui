@@ -1,10 +1,8 @@
 # TODO
 
-- Remember last DB command
+- Render the error message using area to choose a monospace font that would align the error cursor with the erroneous word
 - Remember all DB commands in a history
 - Save multiple DB configs (accounts)
-- Show exceptions/errors to user
-- Prevent the DB command timeout from making the user wait before the GUI is updated (otherwise consider having it extended automatically if needed)
 - Support DML DB commands (SQL commands for mutating database data like insert/update/delete)
 - Support MySQL DB
 - Support CSV files

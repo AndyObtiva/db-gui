@@ -29,7 +29,7 @@ class DbGui
             }
             spinbox(0, TIMEOUT_MAX_IN_MILLISECONDS) {
               stretchy false
-              value <=> [db, :db_command_timeout]
+              value <=> [db, :db_command_timeout, on_read: :to_i]
             }
             
             label('Row(s): ') {

@@ -1,8 +1,14 @@
 # Change Log
 
+## 0.1.1
+
+- Automatically extend DB command timeout after timing out by retrying 6 times (7 times total) with exponential timeout increases
+- Avoid DB command timeout if DB result row count is received
+- Show error when DB command fails
+
 ## 0.1.0
 
-- Save last DB command
+- Remember last DB command
 - Move saved configuration from ~/.db_gui as a file to ~/.db_gui as a directory with multiple files underneath: ~/.db_gui/.db_configs & ~/.db_gui/.db_commands
 
 ## 0.0.4

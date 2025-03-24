@@ -1,4 +1,4 @@
-# DB GUI (Database Graphical User Interface) 0.1.0
+# DB GUI (Database Graphical User Interface) 0.1.1
 ## [<img src="https://raw.githubusercontent.com/AndyObtiva/glimmer/master/images/glimmer-logo-hi-res.png" height=40 /> Glimmer DSL for LibUI Application](https://github.com/AndyObtiva/glimmer-dsl-libui)
 [![Gem Version](https://badge.fury.io/rb/db-gui.svg)](http://badge.fury.io/rb/db-gui)
 
@@ -12,7 +12,7 @@ It currently supports PostgreSQL as a start, with the potential of supporting ma
 
 Run:
 ```
-gem install db-gui -v0.1.0
+gem install db-gui -v0.1.1
 ```
 
 ## Usage

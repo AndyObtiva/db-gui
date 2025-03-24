@@ -3,25 +3,27 @@ require 'timeout'
 
 class DbGui
   module Model
-    Db = Struct.new(:host, :port, :dbname, :username, :password, keyword_init: true) do
+    Db = Struct.new(:host, :port, :dbname, :username, :password, :db_command_timeout, keyword_init: true) do
       DIR_DB_GUI = File.expand_path(File.join('~', '.db_gui'))
       FileUtils.rm(DIR_DB_GUI) if File.file?(DIR_DB_GUI)
       FileUtils.mkdir_p(DIR_DB_GUI)
       FILE_DB_CONFIGS = File.expand_path(File.join(DIR_DB_GUI, '.db_configs'))
       FILE_DB_COMMANDS = File.expand_path(File.join(DIR_DB_GUI, '.db_commands'))
+      COUNT_RETRIES = ENV.fetch('DB_COMMAND_COUNT_RETRIES', 7)
+      REGEX_ROW_COUNT = /^\((\d+) row/
+      ERROR_PREFIX = 'ERROR:'
       
       attr_accessor :connected
       alias connected? connected
       attr_accessor :db_command_result
       attr_accessor :db_command
-      attr_accessor :db_command_timeout
     
       def initialize
-        self.port = 5432 # PostgreSQL default port
-        self.db_command_result = ''
-        self.db_command_timeout = (ENV['DB_COMMAND_TIMEOUT_IN_MILLISECONDS'] || 300).to_i
         load_db_config
         load_db_command
+        self.port ||= 5432 # PostgreSQL default port
+        self.db_command_result = ''
+        self.db_command_timeout ||= ENV.fetch('DB_COMMAND_TIMEOUT_IN_MILLISECONDS', 300).to_i
         connect if to_h.except(:password).none? {|value| value.nil? || (value.respond_to?(:empty?) && value.empty?) }
       end
       
@@ -46,7 +48,8 @@ class DbGui
       end
       
       def io
-        @io ||= IO.popen("PGPASSWORD=\"#{password}\" psql --host=#{host} --port=#{port} --username=#{username} --dbname=#{dbname}", 'r+')
+        db_connection_command = "PGPASSWORD=\"#{password}\" psql --host=#{host} --port=#{port} --username=#{username} --dbname=#{dbname}"
+        @io ||= IO.popen(db_connection_command, 'r+', err: [:child, :out])
       end
       
       def run_io_command(command)
@@ -56,13 +59,22 @@ class DbGui
         @io_command_try += 1
         io.puts(command)
         read_io_into_db_command_result
-      rescue Errno::EPIPE => e
+        @io_command_try = nil
+      rescue Timeout::Error, Errno::EPIPE => e
+        puts e.message
         @io = nil
-        run_io_command(command) unless @io_command_try > 1
+        if @io_command_try > COUNT_RETRIES
+          @io_command_try = nil
+        else
+          self.db_command_timeout *= 2
+          puts "Retrying DB Command...  {try: #{@io_command_try + 1}, db_command_timeout: #{db_command_timeout}}"
+          run_io_command(command) unless db_command_result_error?
+        end
       end
       
       def run_db_command
         run_io_command(db_command)
+        save_db_config
         save_db_command
       end
       
@@ -78,16 +90,26 @@ class DbGui
         db_command_result_count_headers_rows[2]
       end
       
+      def db_command_result_error?
+        db_command_result.to_s.strip.start_with?(ERROR_PREFIX)
+      end
+      
       private
       
       def read_io_into_db_command_result
-        self.db_command_result = ''
-        while (line = io_gets)
-          result = line.to_s
-          self.db_command_result += result
+        self.db_command_result = read_db_command_result = ''
+        while (!(@line.to_s.match(REGEX_ROW_COUNT) || @line.to_s.strip == "^") && (@line = io_gets))
+          read_db_command_result += @line.to_s
         end
-      rescue Errno::EPIPE => e
-        @io = nil
+        self.db_command_result = read_db_command_result
+      rescue
+        if read_db_command_result.to_s.strip.start_with?(ERROR_PREFIX)
+          self.db_command_result = read_db_command_result
+        else
+          raise
+        end
+      ensure
+        @line = nil
       end
       
       def save_db_config
@@ -123,11 +145,10 @@ class DbGui
       end
       
       def io_gets
-        # TODO figure out a way of knowing the end of input without timing out
         Timeout.timeout(db_command_timeout/1000.0) { io.gets }
       rescue
         @io = nil
-        nil
+        raise
       end
       
       def db_command_result_count_headers_rows
@@ -141,12 +162,11 @@ class DbGui
       def compute_db_command_result_count_headers_rows
         count = 0
         headers = rows = []
-        db_command_result_lines = db_command_result.lines
-        db_command_result_lines.pop if db_command_result_lines.last == "\n"
+        db_command_result_lines = db_command_result.lines.reject { |line| line == "\n" }
         if db_command_result_lines.any?
           headers = db_command_result_lines.first.split('|').map(&:strip)
           count_footer = db_command_result_lines.last
-          count_match = count_footer.match(/^\((\d+) row/)
+          count_match = count_footer.match(REGEX_ROW_COUNT)
           if count_match
             count = count_match[1].to_i
             rows = db_command_result_lines[2..-2].map {|row| row.split('|').map(&:strip) }
