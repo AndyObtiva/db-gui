@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.1
+
+- Fix bug in 0.2.0 with crashing whenever running a DB query for the second time.
+
 ## 0.2.0
 
 - Edit -> Copy Table menu item to copy table data as a formatted string to the clipboard

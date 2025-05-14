@@ -20,7 +20,11 @@ class DbGui
                 
                 cell_rows db.db_command_result_rows
                 selection_mode :one
-                selection <=> [db, :db_command_result_selection]
+                selection db.db_command_result_selection
+                
+                on_selection_changed do |t, selection, added_selection, removed_selection|
+                  db.db_command_result_selection = selection
+                end
               }
             else
               label('No data')
