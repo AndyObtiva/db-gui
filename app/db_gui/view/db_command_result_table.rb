@@ -19,6 +19,8 @@ class DbGui
                 end
                 
                 cell_rows db.db_command_result_rows
+                selection_mode :one
+                selection <=> [db, :db_command_result_selection]
               }
             else
               label('No data')

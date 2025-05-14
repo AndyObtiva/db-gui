@@ -18,7 +18,7 @@ Juwelier::Tasks.new do |gem|
   gem.homepage = "http://github.com/AndyObtiva/db-gui"
   gem.license = "MIT"
   gem.summary = %Q{DB GUI}
-  gem.description = %Q{DB GUI (Database Graphical User Interface) - Enables Interaction with Relational SQL Databases}
+  gem.description = %Q{DB GUI (Database Graphical User Interface) - Enables Interaction with Relational SQL Databases. This alpha version only supports PostgreSQL at the moment.}
   gem.email = "andy.am@gmail.com"
   gem.authors = ["Andy Maleh"]
 

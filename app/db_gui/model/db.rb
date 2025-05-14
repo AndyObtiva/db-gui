@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'timeout'
+require 'clipboard'
 
 class DbGui
   module Model
@@ -12,11 +13,13 @@ class DbGui
       COUNT_RETRIES = ENV.fetch('DB_COMMAND_COUNT_RETRIES', 7)
       REGEX_ROW_COUNT = /^\((\d+) row/
       ERROR_PREFIX = 'ERROR:'
+      NEW_LINE = OS.windows? ? "\r\n" : "\n"
       
       attr_accessor :connected
       alias connected? connected
       attr_accessor :db_command_result
       attr_accessor :db_command
+      attr_accessor :db_command_result_selection
     
       def initialize
         load_db_config
@@ -24,6 +27,7 @@ class DbGui
         self.port ||= 5432 # PostgreSQL default port
         self.db_command_result = ''
         self.db_command_timeout ||= ENV.fetch('DB_COMMAND_TIMEOUT_IN_MILLISECONDS', 300).to_i
+        self.db_command_result_selection = 0
         connect if to_h.except(:password).none? {|value| value.nil? || (value.respond_to?(:empty?) && value.empty?) }
       end
       
@@ -92,6 +96,30 @@ class DbGui
       
       def db_command_result_error?
         db_command_result.to_s.strip.start_with?(ERROR_PREFIX)
+      end
+      
+      def copy_table
+        return if db_command_result_rows.empty?
+        Clipboard.copy(formatted_table_string)
+      end
+      
+      def copy_selected_row
+        return if db_command_result_rows.empty?
+        Clipboard.copy(formatted_selected_row_string)
+      end
+      
+      def formatted_table_string
+        column_max_lengths = db_command_result_column_max_lengths
+        db_command_result_rows.map do |row|
+          row.each_with_index.map do |data, column_index|
+            data.ljust(column_max_lengths[column_index])
+          end.join(" | ")
+        end.join(NEW_LINE)
+      end
+      
+      def formatted_selected_row_string
+        selected_row = db_command_result_rows[db_command_result_selection]
+        selected_row.join(' | ')
       end
       
       private
@@ -173,6 +201,18 @@ class DbGui
           end
         end
         [count, headers, rows]
+      end
+      
+      def db_command_result_column_max_lengths
+        column_count = db_command_result_rows.first.size
+        column_max_lengths = []
+        db_command_result_rows.each do |row|
+          row.each_with_index do |value, column_index|
+            column_max_lengths[column_index] ||= 0
+            column_max_lengths[column_index] = [column_max_lengths[column_index], value.size].max
+          end
+        end
+        column_max_lengths
       end
     end
   end

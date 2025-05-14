@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.0
+
+- Edit -> Copy Table menu item to copy table data as a formatted string to the clipboard
+- Edit -> Copy Selected Row menu item to copy selected row data as a formatted string to the clipboard
+
 ## 0.1.1
 
 - Automatically extend DB command timeout after timing out by retrying 6 times (7 times total) with exponential timeout increases

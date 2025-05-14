@@ -1,6 +1,7 @@
 # TODO
 
 - Render the error message using area to choose a monospace font that would align the error cursor with the erroneous word
+- Replace table with refined_table with pagination and filtering support to handle larger amounts of data
 - Remember all DB commands in a history
 - Save multiple DB configs (accounts)
 - Support DML DB commands (SQL commands for mutating database data like insert/update/delete)
