@@ -108,16 +108,31 @@ class DbGui
         Clipboard.copy(formatted_selected_row_string)
       end
       
-      def formatted_table_string
-        column_max_lengths = db_command_result_column_max_lengths
-        db_command_result_rows.map do |row|
+      def copy_table_without_headers
+        return if db_command_result_rows.empty?
+        Clipboard.copy(formatted_table_string(include_headers: false))
+      end
+      
+      def copy_selected_row_without_headers
+        return if db_command_result_rows.empty?
+        Clipboard.copy(formatted_selected_row_string(include_headers: false))
+      end
+      
+      def formatted_table_string(include_headers: true)
+        # TODO consider generalizing this method further to reuse in the formatted row string with headers
+        column_max_lengths = db_command_result_column_max_lengths # TODO calculate those after prepending headers
+        rows = db_command_result_rows
+        rows.prepend(db_command_result_headers) if include_headers
+        # TODO include dash separator between headers and data
+        rows.map do |row|
           row.each_with_index.map do |data, column_index|
             data.ljust(column_max_lengths[column_index])
           end.join(" | ")
         end.join(NEW_LINE)
       end
       
-      def formatted_selected_row_string
+      def formatted_selected_row_string(include_headers: true)
+        # TODO handle include_headers true
         selected_row = db_command_result_rows[db_command_result_selection]
         selected_row.join(' | ')
       end
