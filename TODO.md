@@ -1,5 +1,6 @@
 # TODO
 
+- Allow copying raw result as is as well (not just rows)
 - Render the error message using area to choose a monospace font that would align the error cursor with the erroneous word
 - Replace table with refined_table with pagination and filtering support to handle larger amounts of data
 - Remember all DB commands in a history

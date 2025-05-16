@@ -45,11 +45,27 @@ class DbGui
             end
           }
 
+          menu_item('Copy Table (without headers)') {
+            enabled <= [db, :db_command_result_rows, computed_by: :db_command_result, on_read: -> (data) { !data.empty? }]
+            
+            on_clicked do
+              db.copy_table_without_headers
+            end
+          }
+
           menu_item('Copy Selected Row') {
             enabled <= [db, :db_command_result_rows, computed_by: :db_command_result, on_read: -> (data) { !data.empty? }]
             
             on_clicked do
               db.copy_selected_row
+            end
+          }
+
+          menu_item('Copy Selected Row (without headers)') {
+            enabled <= [db, :db_command_result_rows, computed_by: :db_command_result, on_read: -> (data) { !data.empty? }]
+            
+            on_clicked do
+              db.copy_selected_row_without_headers
             end
           }
 
