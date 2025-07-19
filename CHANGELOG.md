@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.2
+
+- Edit -> Copy Table (with headers) menu item to copy table data with headers as a formatted string to the clipboard
+- Edit -> Copy Selected Row  (with headers) menu item to copy selected row data with headers as a formatted string to the clipboard
+
 ## 0.2.1
 
 - Fix bug in 0.2.0 with crashing whenever running a DB query for the second time.

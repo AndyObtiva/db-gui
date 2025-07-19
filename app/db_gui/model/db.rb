@@ -108,22 +108,21 @@ class DbGui
         Clipboard.copy(formatted_selected_row_string)
       end
       
-      def copy_table_without_headers
+      def copy_table_with_headers
         return if db_command_result_rows.empty?
-        Clipboard.copy(formatted_table_string(include_headers: false))
+        Clipboard.copy(formatted_table_string(include_headers: true))
       end
       
-      def copy_selected_row_without_headers
+      def copy_selected_row_with_headers
         return if db_command_result_rows.empty?
-        Clipboard.copy(formatted_selected_row_string(include_headers: false))
+        Clipboard.copy(formatted_selected_row_string(include_headers: true))
       end
       
-      def formatted_table_string(include_headers: true)
-        # TODO consider generalizing this method further to reuse in the formatted row string with headers
-        column_max_lengths = db_command_result_column_max_lengths # TODO calculate those after prepending headers
-        rows = db_command_result_rows
+      def formatted_table_string(rows = nil, include_headers: false)
+        rows ||= db_command_result_rows
+        rows = rows.dup
         rows.prepend(db_command_result_headers) if include_headers
-        # TODO include dash separator between headers and data
+        column_max_lengths = row_column_max_lengths(rows) # TODO calculate those after prepending headers
         rows.map do |row|
           row.each_with_index.map do |data, column_index|
             data.ljust(column_max_lengths[column_index])
@@ -131,10 +130,11 @@ class DbGui
         end.join(NEW_LINE)
       end
       
-      def formatted_selected_row_string(include_headers: true)
-        # TODO handle include_headers true
+      def formatted_selected_row_string(include_headers: false)
         selected_row = db_command_result_rows[db_command_result_selection]
         selected_row.join(' | ')
+        rows = [selected_row]
+        formatted_table_string(rows, include_headers:)
       end
       
       private
@@ -218,10 +218,11 @@ class DbGui
         [count, headers, rows]
       end
       
-      def db_command_result_column_max_lengths
-        column_count = db_command_result_rows.first.size
+      def row_column_max_lengths(rows = nil)
+        rows ||= db_command_result_rows
+        column_count = rows.first.size
         column_max_lengths = []
-        db_command_result_rows.each do |row|
+        rows.each do |row|
           row.each_with_index do |value, column_index|
             column_max_lengths[column_index] ||= 0
             column_max_lengths[column_index] = [column_max_lengths[column_index], value.size].max
