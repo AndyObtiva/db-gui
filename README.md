@@ -1,4 +1,4 @@
-# DB GUI (Database Graphical User Interface) 0.2.2
+# DB GUI (Database Graphical User Interface) 0.2.3
 ## [<img src="https://raw.githubusercontent.com/AndyObtiva/glimmer/master/images/glimmer-logo-hi-res.png" height=40 /> Glimmer DSL for LibUI Application](https://github.com/AndyObtiva/glimmer-dsl-libui)
 [![Gem Version](https://badge.fury.io/rb/db-gui.svg)](http://badge.fury.io/rb/db-gui)
 
@@ -12,7 +12,7 @@ It currently supports PostgreSQL as a start, with the potential of supporting ma
 
 Run:
 ```
-gem install db-gui -v0.2.2
+gem install db-gui -v0.2.3
 ```
 
 ## Usage
@@ -32,10 +32,13 @@ Note that it stores the last connection details under `~/.db_gui`, and will auto
 
 Click on this menu item to copy the table data as a formatted string to the clipboard.
 
-
 **Edit -> Copy Table (with headers)**
 
 Click on this menu item to copy the table data with headers as a formatted string to the clipboard.
+
+**Edit -> Copy Table (with query & headers)**
+
+Click on this menu item to copy the table data with query (e.g. SQL) & headers as a formatted string to the clipboard.
 
 **Edit -> Copy Selected Row**
 

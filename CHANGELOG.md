@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.3
+
+- Edit -> Copy Table (with query & headers) menu item to copy table data with query (e.g. SQL) & headers as a formatted string to the clipboard
+
 ## 0.2.2
 
 - Edit -> Copy Table (with headers) menu item to copy table data with headers as a formatted string to the clipboard

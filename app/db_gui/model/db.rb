@@ -103,14 +103,19 @@ class DbGui
         Clipboard.copy(formatted_table_string)
       end
       
-      def copy_selected_row
-        return if db_command_result_rows.empty?
-        Clipboard.copy(formatted_selected_row_string)
-      end
-      
       def copy_table_with_headers
         return if db_command_result_rows.empty?
         Clipboard.copy(formatted_table_string(include_headers: true))
+      end
+      
+      def copy_table_with_query_and_headers
+        return if db_command_result_rows.empty?
+        Clipboard.copy(formatted_table_string(include_query: true, include_headers: true))
+      end
+      
+      def copy_selected_row
+        return if db_command_result_rows.empty?
+        Clipboard.copy(formatted_selected_row_string)
       end
       
       def copy_selected_row_with_headers
@@ -118,16 +123,18 @@ class DbGui
         Clipboard.copy(formatted_selected_row_string(include_headers: true))
       end
       
-      def formatted_table_string(rows = nil, include_headers: false)
+      def formatted_table_string(rows = nil, include_query: false, include_headers: false)
         rows ||= db_command_result_rows
         rows = rows.dup
         rows.prepend(db_command_result_headers) if include_headers
         column_max_lengths = row_column_max_lengths(rows) # TODO calculate those after prepending headers
-        rows.map do |row|
+        formatted_string = rows.map do |row|
           row.each_with_index.map do |data, column_index|
             data.ljust(column_max_lengths[column_index])
           end.join(" | ")
         end.join(NEW_LINE)
+        formatted_string.prepend("#{db_command}\n\n") if include_query
+        formatted_string
       end
       
       def formatted_selected_row_string(include_headers: false)

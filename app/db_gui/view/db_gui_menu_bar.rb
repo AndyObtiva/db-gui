@@ -31,6 +31,14 @@ class DbGui
             end
           }
 
+          menu_item('Copy Table (with query & headers)') {
+            enabled <= [db, :db_command_result_rows, computed_by: :db_command_result, on_read: -> (data) { !data.empty? }]
+            
+            on_clicked do
+              db.copy_table_with_query_and_headers
+            end
+          }
+
           menu_item('Copy Selected Row') {
             enabled <= [db, :db_command_result_rows, computed_by: :db_command_result, on_read: -> (data) { !data.empty? }]
             
