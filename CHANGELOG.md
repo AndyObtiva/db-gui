@@ -8,6 +8,7 @@
 
 - Edit -> Copy Table (with headers) menu item to copy table data with headers as a formatted string to the clipboard
 - Edit -> Copy Selected Row  (with headers) menu item to copy selected row data with headers as a formatted string to the clipboard
+- Query -> Run menu item to run query
 
 ## 0.2.1
 
