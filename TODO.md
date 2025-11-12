@@ -10,6 +10,8 @@
 - Provide preference screen for editing DB command history (deleting or clearing all commands)
 
 ## Future
+- Remember result history
+- Copy a specific cell (offer a dialog that takes column name or number)
 - Allow copying raw result as is as well (not just rows)
 - Render the error message using area to choose a monospace font that would align the error cursor with the erroneous word
 - Replace table with refined_table with pagination and filtering support to handle larger amounts of data

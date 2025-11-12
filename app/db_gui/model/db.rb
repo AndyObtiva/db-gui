@@ -4,7 +4,9 @@ require 'clipboard'
 
 class DbGui
   module Model
-    Db = Struct.new(:host, :port, :dbname, :username, :password, :db_command_timeout, keyword_init: true) do
+    Db = Struct.new(:name, :host, :port, :dbname, :username, :password, :db_command_timeout, keyword_init: true) do
+#       include Glimmer::DataBinding::ObservableModel
+      
       DIR_DB_GUI = File.expand_path(File.join('~', '.db_gui'))
       FileUtils.rm(DIR_DB_GUI) if File.file?(DIR_DB_GUI)
       FileUtils.mkdir_p(DIR_DB_GUI)
@@ -15,6 +17,8 @@ class DbGui
       ERROR_PREFIX = 'ERROR:'
       NEW_LINE = OS.windows? ? "\r\n" : "\n"
       
+      attr_accessor :deleteable
+      alias deleteable? deleteable
       attr_accessor :connected
       alias connected? connected
       attr_accessor :db_command_result
@@ -22,13 +26,43 @@ class DbGui
       attr_accessor :db_command_result_selection
     
       def initialize
-        load_db_config
+#         Glimmer::DataBinding::Observer.proc do |value|
+#           notify_observers(:deleteable)
+#           notify_observers(:deleteable?)
+#         end.observe(self, :name)
+#         load_db_config
         load_db_command
+        reset
+#         connect if to_h.except(:password).none? {|value| value.nil? || (value.respond_to?(:empty?) && value.empty?) }
+        to_h.keys.each do |attribute|
+          Glimmer::DataBinding::Observer.proc do |value|
+            notify_observers(:saveable)
+          end.observe(self, attribute)
+        end
+      end
+      
+      def reset
+        self.name = Db::NAME_NEW
+        self.host = nil
         self.port ||= 5432 # PostgreSQL default port
+        self.dbname = nil
+        self.username = nil
+        self.password = nil
         self.db_command_result = ''
         self.db_command_timeout ||= ENV.fetch('DB_COMMAND_TIMEOUT_IN_MILLISECONDS', 300).to_i
         self.db_command_result_selection = 0
-        connect if to_h.except(:password).none? {|value| value.nil? || (value.respond_to?(:empty?) && value.empty?) }
+      end
+      
+      def new?
+        name === Db::NAME_NEW
+      end
+      
+      def saveable
+        !new?
+      end
+      
+      def deleteable
+        !new?
       end
       
       def toggle_connection
@@ -212,6 +246,8 @@ class DbGui
       def compute_db_command_result_count_headers_rows
         count = 0
         headers = rows = []
+        # TODO db_command_result.lines has an issue in case the data in the DB in a certain row contains \n
+        # Try to bisect data more correctly, maybe by looking at \n one by one
         db_command_result_lines = db_command_result.lines.reject { |line| line == "\n" }
         if db_command_result_lines.any?
           headers = db_command_result_lines.first.split('|').map(&:strip)
@@ -238,5 +274,6 @@ class DbGui
         column_max_lengths
       end
     end
+    Db::NAME_NEW = '(New Config)'
   end
 end

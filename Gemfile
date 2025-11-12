@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
-gem 'glimmer-dsl-libui', '~> 0.12.7'
+gem 'glimmer-dsl-libui', '~> 0.13.0'
 gem 'clipboard', '~> 2.0.0'
 
 group :development do
