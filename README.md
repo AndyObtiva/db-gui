@@ -8,6 +8,10 @@ It currently supports PostgreSQL as a start, with the potential of supporting ma
 
 ![db gui](/screenshots/db-gui-mac.png)
 
+![db gui](/screenshots/db-gui-mac-disconnected.png)
+
+![db gui](/screenshots/db-gui-mac-multiple-db-configs.png)
+
 ## Setup
 
 Run:
