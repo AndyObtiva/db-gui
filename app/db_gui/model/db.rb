@@ -99,7 +99,6 @@ class DbGui
       
       def run_db_command
         run_io_command(db_command)
-        save_db_config
         save_db_command
       end
       
@@ -148,7 +147,7 @@ class DbGui
         rows ||= db_command_result_rows
         rows = rows.dup
         rows.prepend(db_command_result_headers) if include_headers
-        column_max_lengths = row_column_max_lengths(rows) # TODO calculate those after prepending headers
+        column_max_lengths = row_column_max_lengths(rows)
         formatted_string = rows.map do |row|
           row.each_with_index.map do |data, column_index|
             data.ljust(column_max_lengths[column_index])
@@ -184,7 +183,7 @@ class DbGui
       end
       
       def save_db_command
-        db_commands_array = [db_command] # TODO in the future, support storing multiple DB configs
+        db_commands_array = [db_command] # TODO in the future, support storing multiple DB commands
         db_commands_file_content = YAML.dump(db_commands_array)
         File.write(FILE_DB_COMMANDS, db_commands_file_content)
       end

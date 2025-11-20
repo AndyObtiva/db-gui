@@ -10,8 +10,6 @@ class DbGui
       body {
         vertical_box {
           form {
-            # TODO consider switching to editable_combobox to enter new value and save in the same control
-            # TODO fix issue with current design using combobox before refactoring to editable_combobox
             combobox { |me|
               label 'Selected Config:'
               items <= [db_presenter, :dbs, on_read: ->(dbs) { dbs.map(&:name) }]

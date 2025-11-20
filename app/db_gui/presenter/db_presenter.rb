@@ -1,8 +1,11 @@
+require 'glimmer/data_binding/observable_model'
 require 'db_gui/model/db'
 
 class DbGui
   module Presenter
     class DbPresenter
+      include Glimmer::DataBinding::ObservableModel
+      
       attr_accessor :dbs, :selected_db, :new_db
       
       def initialize
@@ -10,6 +13,7 @@ class DbGui
         @dbs = [@new_db]
         @selected_db = @new_db
         load_db_config
+        selected_db.connect
       end
       
       def newable
@@ -48,8 +52,6 @@ class DbGui
         self.selected_db_name = new_db.name
       end
       
-      # TODO loading/saving to file
-      # TODO ensure selected db is only editable when disconnected
       def save_config
         dbs_attributes = dbs.reject {|db| db.name == Model::Db::NAME_NEW }.map(&:to_h)
         selected_db_name

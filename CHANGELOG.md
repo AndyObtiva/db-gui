@@ -3,6 +3,7 @@
 ## 0.3.0
 
 - Support the ability to save/load multiple databases (DB configs)
+- Add more resiliency against errors when copying table or record data via menu items
 
 ## 0.2.3
 

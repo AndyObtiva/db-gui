@@ -2,6 +2,8 @@
 
 ## 0.3.0
 
+- Fix No database configurations stored yet. undefined method `notify_observers' for #<DbGui::Presenter::DbPresenter:0x00000001067b7da0 @new_db=#<DbGui::Model::Db:0x-2d6d336c2fab2834>, @dbs=[#<DbGui::Model::Db:0x-2d6d336c2fab2834>, #<DbGui::Model::Db:0x311955cd94f035e7>, #<DbGui::Model::Db:0x-3864b27306b3955e>], @selected_db=#<DbGui::Model::Db:0x311955cd94f035e7>>
+
 - Remember all DB commands in a history of commands (show them in a dropdown)
 - Ability to update a remembered DB command
 - Ability to delete a remembered DB command

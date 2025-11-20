@@ -16,42 +16,62 @@ class DbGui
         
         menu('Edit') {
           menu_item('Copy Table') {
-            enabled <= [db_presenter, 'selected_db.db_command_result_rows', computed_by: :db_command_result, on_read: -> (data) { !data.empty? }]
+            enabled <= [db_presenter, 'selected_db.db_command_result_rows', computed_by: 'selected_db.db_command_result', on_read: -> (data) { !data.empty? }]
             
             on_clicked do
-              db_presenter.selected_db.copy_table
+              begin
+                db_presenter.selected_db.copy_table
+              rescue => e
+                puts "Encountered an error copying table: #{e.full_message}"
+              end
             end
           }
 
           menu_item('Copy Table (with headers)') {
-            enabled <= [db_presenter, 'selected_db.db_command_result_rows', computed_by: :db_command_result, on_read: -> (data) { !data.empty? }]
+            enabled <= [db_presenter, 'selected_db.db_command_result_rows', computed_by: 'selected_db.db_command_result', on_read: -> (data) { !data.empty? }]
             
             on_clicked do
-              db_presenter.selected_db.copy_table_with_headers
+              begin
+                db_presenter.selected_db.copy_table_with_headers
+              rescue => e
+                puts "Encountered an error copying table (with headers): #{e.full_message}"
+              end
             end
           }
 
           menu_item('Copy Table (with query & headers)') {
-            enabled <= [db_presenter, 'selected_db.db_command_result_rows', computed_by: :db_command_result, on_read: -> (data) { !data.empty? }]
+            enabled <= [db_presenter, 'selected_db.db_command_result_rows', computed_by: 'selected_db.db_command_result', on_read: -> (data) { !data.empty? }]
             
             on_clicked do
-              db_presenter.selected_db.copy_table_with_query_and_headers
+              begin
+                db_presenter.selected_db.copy_table_with_query_and_headers
+              rescue => e
+                puts "Encountered an error copying table (with query & headers): #{e.full_message}"
+              end
             end
           }
 
           menu_item('Copy Selected Row') {
-            enabled <= [db_presenter, 'selected_db.db_command_result_rows', computed_by: :db_command_result, on_read: -> (data) { !data.empty? }]
+            enabled <= [db_presenter, 'selected_db.db_command_result_rows', computed_by: 'selected_db.db_command_result', on_read: -> (data) { !data.empty? }]
             
             on_clicked do
-              db_presenter.selected_db.copy_selected_row
+              begin
+                db_presenter.selected_db.copy_selected_row
+              rescue => e
+                puts "Encountered an error copying selected row: #{e.full_message}"
+              end
             end
           }
 
           menu_item('Copy Selected Row (with headers)') {
-            enabled <= [db_presenter, 'selected_db.db_command_result_rows', computed_by: :db_command_result, on_read: -> (data) { !data.empty? }]
+            enabled <= [db_presenter, 'selected_db.db_command_result_rows', computed_by: 'selected_db.db_command_result', on_read: -> (data) { !data.empty? }]
             
             on_clicked do
-              db_presenter.selected_db.copy_selected_row_with_headers
+              begin
+                db_presenter.selected_db.copy_selected_row_with_headers
+              rescue => e
+                puts "Encountered an error copying selected row (with headers): #{e.full_message}"
+              end
             end
           }
 
