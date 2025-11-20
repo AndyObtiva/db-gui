@@ -9,6 +9,7 @@ class DbGui
         @new_db = Model::Db.new
         @dbs = [@new_db]
         @selected_db = @new_db
+        load_db_config
       end
       
       def newable
@@ -22,10 +23,10 @@ class DbGui
       def selected_db_name=(db_name)
         self.selected_db = dbs.find { |db| db.name == db_name }
         notify_observers(:newable)
+        save_config
       end
       
       def save
-        # TODO validate that name is NOT NAME_NEW
         if selected_db == new_db && selected_db.name != Model::Db::NAME_NEW
           saved_db = new_db.clone
           new_db.reset
@@ -35,9 +36,7 @@ class DbGui
           notify_observers(:dbs)
           self.selected_db_name = selected_db.name
         end
-        # save config in selected db
-        # TODO disconnect if needed
-        # TODO reconnect if needed
+        save_config
       end
       
       def new
@@ -50,6 +49,33 @@ class DbGui
       end
       
       # TODO loading/saving to file
+      # TODO ensure selected db is only editable when disconnected
+      def save_config
+        dbs_attributes = dbs.reject {|db| db.name == Model::Db::NAME_NEW }.map(&:to_h)
+        selected_db_name
+        db_config = {
+          selected_db_name:,
+          dbs: dbs_attributes,
+        }
+        db_config_yaml = YAML.dump(db_config)
+        File.write(FILE_DB_CONFIGS, db_config_yaml)
+      end
+      
+      def load_db_config
+        db_config_yaml = File.read(FILE_DB_CONFIGS)
+        db_config = YAML.load(db_config_yaml)
+        db_config[:dbs].each do |db_config|
+          db = Model::Db.new
+          db_config.each do |attribute, value|
+            db.send("#{attribute}=", value)
+          end
+          self.dbs << db
+        end
+        self.selected_db_name = db_config[:selected_db_name]
+      rescue => e
+        puts "No database configurations stored yet. #{e.message}"
+      end
+      
     end
   end
 end

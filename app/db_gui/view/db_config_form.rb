@@ -14,19 +14,9 @@ class DbGui
             # TODO fix issue with current design using combobox before refactoring to editable_combobox
             combobox { |me|
               label 'Selected Config:'
-              items <= [db_presenter, :dbs, on_read: ->(dbs) { pd dbs.map(&:name) }]
-              selected_item <=> [db_presenter, :selected_db_name,
-#                                   on_read: -> (val) {pd val},
-#                                   on_write: -> (val) {pd me.selected_item; pd val},
-#                                   after_write: -> {pd me.selected_item},
-                                ]
-#               selected <=> [db_presenter, :selected_db_name,
-#                                   on_read: -> (val) {pd db_presenter.dbs.map(&:name).index(val)},
-#                                   on_write: -> (val) {pd val; db_presenter.dbs[val].name},
-#                                 ]
-#               on_selected do |c|
-#                 pd "New combobox selection: #{c.selected}"
-#               end
+              items <= [db_presenter, :dbs, on_read: ->(dbs) { dbs.map(&:name) }]
+              selected_item <=> [db_presenter, :selected_db_name]
+              enabled <= [db_presenter, 'selected_db.connected', on_read: :!]
             }
             
             entry {
@@ -62,6 +52,7 @@ class DbGui
             horizontal_box {
               entry {
                 text <=> [db_presenter, 'selected_db.name']
+                enabled <= [db_presenter, 'selected_db.connected', on_read: :!]
               }
               button {
                 stretchy false

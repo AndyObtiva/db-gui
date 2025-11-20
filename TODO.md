@@ -1,15 +1,14 @@
 # TODO
 
 ## 0.3.0
-- Remember all DBs (connections) in a history of DBs (show them in a dropdown)
-- Ability to update a remembered DB
-- Ability to delete a remembered DB
+
 - Remember all DB commands in a history of commands (show them in a dropdown)
 - Ability to update a remembered DB command
 - Ability to delete a remembered DB command
 - Provide preference screen for editing DB command history (deleting or clearing all commands)
 
 ## Future
+
 - Remember result history
 - Copy a specific cell (offer a dialog that takes column name or number)
 - Allow copying raw result as is as well (not just rows)

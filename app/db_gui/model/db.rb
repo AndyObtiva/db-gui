@@ -5,13 +5,7 @@ require 'clipboard'
 class DbGui
   module Model
     Db = Struct.new(:name, :host, :port, :dbname, :username, :password, :db_command_timeout, keyword_init: true) do
-#       include Glimmer::DataBinding::ObservableModel
       
-      DIR_DB_GUI = File.expand_path(File.join('~', '.db_gui'))
-      FileUtils.rm(DIR_DB_GUI) if File.file?(DIR_DB_GUI)
-      FileUtils.mkdir_p(DIR_DB_GUI)
-      FILE_DB_CONFIGS = File.expand_path(File.join(DIR_DB_GUI, '.db_configs'))
-      FILE_DB_COMMANDS = File.expand_path(File.join(DIR_DB_GUI, '.db_commands'))
       COUNT_RETRIES = ENV.fetch('DB_COMMAND_COUNT_RETRIES', 7)
       REGEX_ROW_COUNT = /^\((\d+) row/
       ERROR_PREFIX = 'ERROR:'
@@ -26,14 +20,8 @@ class DbGui
       attr_accessor :db_command_result_selection
     
       def initialize
-#         Glimmer::DataBinding::Observer.proc do |value|
-#           notify_observers(:deleteable)
-#           notify_observers(:deleteable?)
-#         end.observe(self, :name)
-#         load_db_config
         load_db_command
         reset
-#         connect if to_h.except(:password).none? {|value| value.nil? || (value.respond_to?(:empty?) && value.empty?) }
         to_h.keys.each do |attribute|
           Glimmer::DataBinding::Observer.proc do |value|
             notify_observers(:saveable)
@@ -76,7 +64,6 @@ class DbGui
       def connect
         io
         self.connected = true
-        save_db_config
       end
       
       def disconnect
@@ -194,24 +181,6 @@ class DbGui
         end
       ensure
         @line = nil
-      end
-      
-      def save_db_config
-        db_config_hash = to_h
-        db_configs_array = [db_config_hash] # TODO in the future, support storing multiple DB configs
-        db_configs_file_content = YAML.dump(db_configs_array)
-        File.write(FILE_DB_CONFIGS, db_configs_file_content)
-      end
-      
-      def load_db_config
-        db_configs_file_content = File.read(FILE_DB_CONFIGS)
-        db_configs_array = [YAML.load(db_configs_file_content)].flatten
-        db_config_hash = db_configs_array.first # TODO in the future, support loading multiple DB configs
-        db_config_hash.each do |attribute, value|
-          self.send("#{attribute}=", value)
-        end
-      rescue => e
-        puts "No database configurations stored yet. #{e.message}"
       end
       
       def save_db_command

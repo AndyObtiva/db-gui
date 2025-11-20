@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.0
+
+- Support the ability to save/load multiple databases (DB configs)
+
 ## 0.2.3
 
 - Edit -> Copy Table (with query & headers) menu item to copy table data with query (e.g. SQL) & headers as a formatted string to the clipboard
