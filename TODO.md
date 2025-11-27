@@ -1,16 +1,15 @@
 # TODO
 
-## 0.3.0
+## Future
 
 - Fix No database configurations stored yet. undefined method `notify_observers' for #<DbGui::Presenter::DbPresenter:0x00000001067b7da0 @new_db=#<DbGui::Model::Db:0x-2d6d336c2fab2834>, @dbs=[#<DbGui::Model::Db:0x-2d6d336c2fab2834>, #<DbGui::Model::Db:0x311955cd94f035e7>, #<DbGui::Model::Db:0x-3864b27306b3955e>], @selected_db=#<DbGui::Model::Db:0x311955cd94f035e7>>
-
-- Remember all DB commands in a history of commands (show them in a dropdown)
+- Remove the need to escape special values in a password, such as ticks (`) and dollar sign ($). That should be handled automatically by the implementation as to allow the user to enter the DB password raw as they would normally.
 - Ability to update a remembered DB command
 - Ability to delete a remembered DB command
 - Provide preference screen for editing DB command history (deleting or clearing all commands)
-
-## Future
-
+- Remember all DB commands in a history of commands (show them in a dropdown or show a spinner with a command number that can be switched while auto populating the text area)
+- Ability to sort columns alphabetically (or restore original sort)
+- Dynamically configure which table columns are showing up (re-rendering table after they are modified)
 - Remember result history
 - Copy a specific cell (offer a dialog that takes column name or number)
 - Allow copying raw result as is as well (not just rows)
