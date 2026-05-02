@@ -10,17 +10,19 @@ class DbGui
       REGEX_ROW_COUNT = /^\((\d+) row/
       ERROR_PREFIX = 'ERROR:'
       NEW_LINE = OS.windows? ? "\r\n" : "\n"
+      DB_COMMAND_TIMEOUT_DEFAULT = 300
       
       attr_accessor :deleteable
       alias deleteable? deleteable
       attr_accessor :connected
       alias connected? connected
       attr_accessor :db_command_result
+      attr_accessor :db_commands
       attr_accessor :db_command
       attr_accessor :db_command_result_selection
     
       def initialize
-        load_db_command
+        load_db_commands
         reset
         to_h.keys.each do |attribute|
           Glimmer::DataBinding::Observer.proc do |value|
@@ -37,8 +39,17 @@ class DbGui
         self.username = nil
         self.password = nil
         self.db_command_result = ''
-        self.db_command_timeout ||= ENV.fetch('DB_COMMAND_TIMEOUT_IN_MILLISECONDS', 300).to_i
+        self.db_command_timeout ||= ENV.fetch('DB_COMMAND_TIMEOUT_IN_MILLISECONDS', DB_COMMAND_TIMEOUT_DEFAULT).to_i
         self.db_command_result_selection = 0
+        self.db_commands ||= ['']
+        self.db_command ||= ''
+      end
+      
+      def db_commands
+        if @db_commands == []
+          @db_commands = ['']
+        end
+        @db_commands
       end
       
       def new?
@@ -98,8 +109,23 @@ class DbGui
       end
       
       def run_db_command
+        reset_db_command_timeout
         run_io_command(db_command)
-        save_db_command
+        save_db_commands
+      end
+      
+      def clear_db_commands
+        self.db_commands = ['']
+        self.db_command = ''
+        save_db_commands(add_current: false)
+      end
+      
+      def remove_db_command
+        current_db_command = db_command
+        self.db_commands = self.db_commands - [current_db_command.to_s.strip]
+        self.db_command = ''
+        self.db_command = self.db_commands.last || ''
+        save_db_commands(add_current: false)
       end
       
       def db_command_result_count
@@ -182,16 +208,30 @@ class DbGui
         @line = nil
       end
       
-      def save_db_command
-        db_commands_array = [db_command] # TODO in the future, support storing multiple DB commands
-        db_commands_file_content = YAML.dump(db_commands_array)
+      def reset_db_command_timeout
+        self.db_command_timeout = DB_COMMAND_TIMEOUT_DEFAULT
+      end
+      
+      def save_db_commands(add_current: true)
+        return if db_command_result_error?
+        new_command = db_command.to_s.strip
+        self.db_commands ||= []
+        db_command_exists_in_db_commands = db_commands.find { |command| new_command == command.to_s.strip }
+        if add_current && !db_command_exists_in_db_commands
+          new_db_commands = db_commands + [new_command]
+          self.db_commands = new_db_commands.reject { |command| command.to_s.strip.empty? }
+        end
+        self.db_command = ''
+        self.db_command = new_command
+        db_commands_file_content = YAML.dump(db_command:, db_commands:)
         File.write(FILE_DB_COMMANDS, db_commands_file_content)
       end
       
-      def load_db_command
+      def load_db_commands
         db_commands_file_content = File.read(FILE_DB_COMMANDS)
-        db_commands_array = YAML.load(db_commands_file_content)
-        self.db_command = db_commands_array.first
+        db_commands_config = YAML.load(db_commands_file_content)
+        self.db_commands = db_commands_config[:db_commands]
+        self.db_command = db_commands_config[:db_command]
       rescue => e
         puts "No database commands stored yet. #{e.message}"
       end

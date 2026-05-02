@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.4.0
+
+- Remember all DB commands in a history dropdown
+- Remove currently selected DB command from DB command history dropdown
+- Clear DB command history dropdown
+
 ## 0.3.0
 
 - Support the ability to save/load multiple databases (DB configs)

@@ -6,11 +6,9 @@
 - Remove the need to escape special values in a password, such as ticks (`) and dollar sign ($). That should be handled automatically by the implementation as to allow the user to enter the DB password raw as they would normally.
 - Ability to update a remembered DB command
 - Ability to delete a remembered DB command
-- Provide preference screen for editing DB command history (deleting or clearing all commands)
-- Remember all DB commands in a history of commands (show them in a dropdown or show a spinner with a command number that can be switched while auto populating the text area)
 - Ability to sort columns alphabetically (or restore original sort)
 - Dynamically configure which table columns are showing up (re-rendering table after they are modified)
-- Remember result history
+- Remember result history (cache?)
 - Copy a specific cell (offer a dialog that takes column name or number)
 - Allow copying raw result as is as well (not just rows)
 - Render the error message using area to choose a monospace font that would align the error cursor with the erroneous word

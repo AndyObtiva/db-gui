@@ -10,7 +10,7 @@ class DbGui
       body {
         vertical_box {
           form {
-            combobox { |me|
+            combobox {
               label 'Selected Config:'
               items <= [db_presenter, :dbs, on_read: ->(dbs) { dbs.map(&:name) }]
               selected_item <=> [db_presenter, :selected_db_name]

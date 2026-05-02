@@ -11,19 +11,40 @@ class DbGui
       
       body {
         vertical_box {
+          horizontal_box {
+            stretchy false
+            combobox {
+              items <= [db_presenter, 'selected_db.db_commands']
+              selected_item <=> [db_presenter, 'selected_db.db_command']
+              enabled <= [db_presenter, 'selected_db.db_commands', on_read: -> (value) { value != [''] }]
+            }
+            button('Remove') {
+              stretchy false
+              on_clicked do
+                db_presenter.selected_db.remove_db_command
+              end
+            }
+            button('Clear') {
+              stretchy false
+              on_clicked do
+                db_presenter.selected_db.clear_db_commands
+              end
+            }
+          }
           non_wrapping_multiline_entry {
             text <=> [db_presenter, 'selected_db.db_command']
           }
-          
           horizontal_box {
             stretchy false
           
             button('Run') {
+              enabled <= [db_presenter, 'selected_db.db_command', on_read: -> (command) { !command.to_s.strip.empty? }]
+              
               on_clicked do
                 db_presenter.selected_db.run_db_command
               end
             }
-            
+                        
             label('Timeout (msec): ') {
               stretchy false
             }
@@ -32,7 +53,7 @@ class DbGui
               value <=> [db_presenter, 'selected_db.db_command_timeout', on_read: :to_i]
             }
             
-            label('Row(s): ') {
+            label('Rows: ') {
               stretchy false
             }
             label {
