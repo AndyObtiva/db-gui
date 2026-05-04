@@ -44,6 +44,10 @@ class DbGui
         self.db_commands ||= ['']
         self.db_command ||= ''
       end
+
+      def db_command_result
+        @db_command_result || ''
+      end
       
       def db_commands
         if @db_commands == []
